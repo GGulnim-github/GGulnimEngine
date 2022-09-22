@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: c3a1c0d50ee41b741b72225dc918f2f7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - WatermarkTexture: {fileID: 2800000, guid: 70bd3db08de0ef047ae9bfe80d8fde30, type: 3}
+  - ScreenCaptureTexture: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
