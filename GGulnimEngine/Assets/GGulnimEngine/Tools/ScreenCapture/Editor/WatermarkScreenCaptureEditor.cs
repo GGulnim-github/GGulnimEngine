@@ -55,7 +55,6 @@ public class WatermarkScreenCaptureEditor : Editor
             DrawCaptureButton("Screen Capture (With UI)", ColorExtensions.DeepSkyBlue, Target.ScreenCaptureWithUI, true, EditorStyles.miniButtonLeft);
             DrawCaptureButton("Screen Capture (Without UI)", ColorExtensions.DodgerBlue, Target.ScreenCaptureWithoutUI, true, EditorStyles.miniButtonRight);
             EditorGUILayout.EndHorizontal();
-
             GUILayout.Label("Dont Use WaterMark", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             DrawCaptureButton("Screen Capture (With UI)", ColorExtensions.DeepSkyBlue, Target.ScreenCaptureWithUI, false, EditorStyles.miniButtonLeft);

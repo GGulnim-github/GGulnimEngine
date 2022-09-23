@@ -5,10 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/GGulnimEngine/Scenes/ScreenCapture.unity
     guid: 257c43bcdd38a8e499d667fbfd0d8b41
-  - enabled: 1
+  - enabled: 0
     path: Assets/GGulnimEngine/Scenes/Test.unity
     guid: 7d7093269ce56d0448723736f9ed59e6
   m_configObjects: {}
