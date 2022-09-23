@@ -1,49 +1,60 @@
-
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 
-public class FindMissingScripts : EditorWindow
+public class FindObejctsWithMissingScripts : EditorWindow
 {
-    protected List<GameObject> _objectWithMissingScripts;    
+    protected List<GameObject> _resultsList;    
     protected Vector2 _scrollView;
     protected int _selected = -1;
     protected int _searchCount = 0;
 
     private Color _originalBackgroundColor;
-    [MenuItem("GGUlnimEngine/Utilities/Find Missing Component")]
+    [MenuItem("GGulnimEngine/Utilities/Find Objects/Find Objects With Missing Scripts")]
     public static void MenuAction()
     {
         OpenWindow();
     }
     public static void OpenWindow()
     {
-        FindMissingScripts window = GetWindow<FindMissingScripts>();
+        FindObejctsWithMissingScripts window = GetWindow<FindObejctsWithMissingScripts>();
         window.position = new Rect(400, 400, 500, 300);
-        window.titleContent = new GUIContent("Find Missing Scripts");
+        window.titleContent = new GUIContent("Find Objects With Missing Scripts");
         window.Show();
     }
 
     private void OnEnable()
     {
-        _objectWithMissingScripts = new List<GameObject>();
+        _resultsList = new List<GameObject>();
         _scrollView = Vector2.zero;
     }
 
     private void OnGUI()
     {
+        DrawHeader();
+        DrawResultList();
+    }
+    private void DrawHeader()
+    {
         _originalBackgroundColor = GUI.backgroundColor;
-        GUI.backgroundColor = ColorExtensions.FireBrick;
+        GUI.backgroundColor = ColorExtensions.DeepSkyBlue;
         GUI.skin.box.padding = new RectOffset(10, 10, 10, 10);
         EditorGUILayout.BeginHorizontal("box");
         if (GUILayout.Button("Find in Assets"))
+        {
             FindInAssets();
+        }
         if (GUILayout.Button("Find in Current Scene"))
+        {
             FindInScenes();
+        }
         EditorGUILayout.EndHorizontal();
-
+        GUI.backgroundColor = _originalBackgroundColor;
+    }
+    private void DrawResultList()
+    {
         switch (_selected)
         {
             case 0:
@@ -55,21 +66,21 @@ public class FindMissingScripts : EditorWindow
                 GUILayout.Label($"Check {_searchCount} GameObjects in Current Scene");
                 break;
         }
-
         GUILayout.Space(5);
         GUILayout.Label("Result", EditorStyles.boldLabel);
-        if (_objectWithMissingScripts.Count == 0)
+        if (_resultsList.Count == 0)
         {
             GUILayout.Label("No GameObjects have missing components.", EditorStyles.boldLabel);
-            GUI.backgroundColor = _originalBackgroundColor;
             return;
         }
+
+        GUI.backgroundColor = ColorExtensions.DeepSkyBlue;
         _scrollView = EditorGUILayout.BeginScrollView(_scrollView);
-        for(int i = 0; i < _objectWithMissingScripts.Count; i++)
+        for (int i = 0; i < _resultsList.Count; i++)
         {
-            if (_objectWithMissingScripts[i] == null)
+            if (_resultsList[i] == null)
             {
-                _objectWithMissingScripts.Remove(_objectWithMissingScripts[i]);
+                _resultsList.Remove(_resultsList[i]);
                 i--;
                 continue;
             }
@@ -80,35 +91,34 @@ public class FindMissingScripts : EditorWindow
                 switch (_selected)
                 {
                     case 0:
-                        buttonStr = AssetDatabase.GetAssetPath(_objectWithMissingScripts[i]);
+                        buttonStr = AssetDatabase.GetAssetPath(_resultsList[i]);
                         break;
                     case 1:
-                        buttonStr = GetFullPath(_objectWithMissingScripts[i].transform);
+                        buttonStr = GetFullPath(_resultsList[i].transform);
                         break;
                 }
                 if (GUILayout.Button(buttonStr))
                 {
-                    EditorGUIUtility.PingObject(_objectWithMissingScripts[i]);
+                    EditorGUIUtility.PingObject(_resultsList[i]);
                 }
                 EditorGUILayout.EndHorizontal();
             }
-        }  
+        }
         EditorGUILayout.EndScrollView();
         GUI.backgroundColor = _originalBackgroundColor;
     }
 
-    void FindInAssets()
+    private void FindInAssets()
     {
         _selected = 0;
-        _objectWithMissingScripts.Clear();
+        _resultsList.Clear();
         
-        string[] assetGUIDs = AssetDatabase.FindAssets("t:GameObject");
-        
-        _searchCount = assetGUIDs.Length;
+        string[] allPrefabsInProject = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(".prefab")).ToArray();
+        _searchCount = allPrefabsInProject.Length;
 
-        foreach (string assetGuiD in assetGUIDs)
+        foreach (string prefab in allPrefabsInProject)
         {
-            GameObject obj = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(assetGuiD));
+            GameObject obj = AssetDatabase.LoadAssetAtPath<GameObject>(prefab);
             RecursiveDepthSearch(obj);
         }
     }
@@ -116,16 +126,15 @@ public class FindMissingScripts : EditorWindow
     private void FindInScenes()
     {
         _selected = 1;
-        _objectWithMissingScripts.Clear();
+        _resultsList.Clear();
 
         for (int i = 0; i < SceneManager.sceneCount; ++i)
         {
             var rootGOs = SceneManager.GetSceneAt(i).GetRootGameObjects();
-
+            
             _searchCount = rootGOs.Length;
-
             foreach (GameObject obj in rootGOs)
-            {
+            {                
                 RecursiveDepthSearch(obj);
             }
         }
@@ -138,8 +147,8 @@ public class FindMissingScripts : EditorWindow
         {
             if (c == null)
             {
-                if (!_objectWithMissingScripts.Contains(root))
-                    _objectWithMissingScripts.Add(root);
+                if (!_resultsList.Contains(root))
+                    _resultsList.Add(root);
             }
         }
         foreach (Transform t in root.transform)
