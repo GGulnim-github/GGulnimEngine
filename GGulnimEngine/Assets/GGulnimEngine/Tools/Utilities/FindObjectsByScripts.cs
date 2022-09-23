@@ -16,17 +16,16 @@ public class FindObjectsByScripts : EditorWindow
 	protected MonoScript _lastSearchedMonoBehaviour;
 	protected string _searchedMonoBehaviourName = "";
 
-
 	private Color _originalBackgroundColor;
     [MenuItem("GGulnimEngine/Utilities/Find Objects/Find Objects By Scripts")]
     public static void MenuAction()
     {
         OpenWindow();
     }
+
     public static void OpenWindow()
     {
         FindObjectsByScripts window = GetWindow<FindObjectsByScripts>();
-        window.position = new Rect(400, 400, 500, 300);
         window.titleContent = new GUIContent("Find Objects By Scripts");
         window.Show();
     }

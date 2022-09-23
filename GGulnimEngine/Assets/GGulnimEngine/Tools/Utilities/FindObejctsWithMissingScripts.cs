@@ -17,10 +17,10 @@ public class FindObejctsWithMissingScripts : EditorWindow
     {
         OpenWindow();
     }
+
     public static void OpenWindow()
     {
         FindObejctsWithMissingScripts window = GetWindow<FindObejctsWithMissingScripts>();
-        window.position = new Rect(400, 400, 500, 300);
         window.titleContent = new GUIContent("Find Objects With Missing Scripts");
         window.Show();
     }
@@ -36,6 +36,7 @@ public class FindObejctsWithMissingScripts : EditorWindow
         DrawHeader();
         DrawResultList();
     }
+
     private void DrawHeader()
     {
         _originalBackgroundColor = GUI.backgroundColor;
@@ -122,7 +123,6 @@ public class FindObejctsWithMissingScripts : EditorWindow
             RecursiveDepthSearch(obj);
         }
     }
-
     private void FindInScenes()
     {
         _selected = 1;
@@ -139,7 +139,6 @@ public class FindObejctsWithMissingScripts : EditorWindow
             }
         }
     }
-
     private void RecursiveDepthSearch(GameObject root)
     {
         Component[] components = root.GetComponents<Component>();
