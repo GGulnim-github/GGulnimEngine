@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/GGulnimEngine/Scenes/ScreenCapture.unity
+    path: Assets/GGulnimEngine/Scenes/TestScene.unity
     guid: 257c43bcdd38a8e499d667fbfd0d8b41
   - enabled: 0
     path: Assets/GGulnimEngine/Scenes/Test.unity

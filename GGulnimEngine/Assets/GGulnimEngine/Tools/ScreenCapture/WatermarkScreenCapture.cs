@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[AddComponentMenu("GGulnim Engine/Tools/WatermarkScreenCapture")]
 public class WatermarkScreenCapture : MonoBehaviour
 {
     public Texture2D WatermarkTexture = null;

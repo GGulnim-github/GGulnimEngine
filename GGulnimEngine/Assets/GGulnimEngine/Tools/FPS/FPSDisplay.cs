@@ -15,11 +15,13 @@ public class FPSDisplay : MonoBehaviour
 	public DISPLAY_POS_H DispPosH = DISPLAY_POS_H.LEFT;
 	public DISPLAY_POS_V DispPosV = DISPLAY_POS_V.TOP;
 
+	[System.Diagnostics.Conditional(SHOW_FPS)]
 	private void Update()
     {
         _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
     }
 
+	[System.Diagnostics.Conditional(SHOW_FPS)]
 	private void OnGUI()
     {
 		ShowFps();
