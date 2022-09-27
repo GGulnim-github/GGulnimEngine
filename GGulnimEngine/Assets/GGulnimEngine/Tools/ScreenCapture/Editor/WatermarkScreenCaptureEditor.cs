@@ -25,6 +25,10 @@ public class WatermarkScreenCaptureEditor : Editor
     private SerializedProperty WatermarkOffsetX;
     private SerializedProperty WatermarkOffsetY;
 
+    private SerializedProperty FlashImg;
+    private SerializedProperty FlashDuration;
+    private SerializedProperty FlashCurve;
+
     private void OnEnable()
     {
         m_target = (WatermarkScreenCapture)target;
@@ -34,6 +38,10 @@ public class WatermarkScreenCaptureEditor : Editor
         WatermarkScaleFactor = serializedObject.FindProperty("WatermarkScaleFactor");
         WatermarkOffsetX = serializedObject.FindProperty("WatermarkOffsetX");
         WatermarkOffsetY = serializedObject.FindProperty("WatermarkOffsetY");
+
+        FlashImg = serializedObject.FindProperty("FlashImg");
+        FlashDuration = serializedObject.FindProperty("FlashDuration");
+        FlashCurve = serializedObject.FindProperty("FlashCurve");
     }
 
     public override void OnInspectorGUI()
@@ -46,6 +54,12 @@ public class WatermarkScreenCaptureEditor : Editor
         DrawPropertyField(WatermarkScaleFactor, ColorExtensions.DeepSkyBlue);
         DrawPropertyField(WatermarkOffsetX, ColorExtensions.DeepSkyBlue);
         DrawPropertyField(WatermarkOffsetY, ColorExtensions.DeepSkyBlue);
+
+        GUILayout.Space(10);
+        GUILayout.Label("Flash", EditorStyles.boldLabel);
+        DrawPropertyField(FlashImg, ColorExtensions.DeepSkyBlue);
+        DrawPropertyField(FlashDuration, ColorExtensions.DeepSkyBlue);
+        DrawPropertyField(FlashCurve, ColorExtensions.DeepSkyBlue);
 
         GUILayout.Space(10);
         if (Application.isPlaying)

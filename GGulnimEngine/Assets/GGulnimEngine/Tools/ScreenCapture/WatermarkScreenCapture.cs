@@ -3,12 +3,18 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
+#if UNITY_ANDROID
+using UnityEngine.Android;
+#endif
 
-[AddComponentMenu("GGulnim Engine/Tools/WatermarkScreenCapture")]
+[AddComponentMenu("GGulnim Engine/Tools/Watermark ScreenCapture")]
 public class WatermarkScreenCapture : MonoBehaviour
 {
     public Texture2D WatermarkTexture = null;
     public TextureExtensions.Watermark_Anchor WatermarkAnchor = TextureExtensions.Watermark_Anchor.TopLeft;
+    public bool UseWatermark = true;
+    public bool WithUI = false;
     public float WatermarkScaleFactor = 1.0f;
     public int WatermarkOffsetX = 0;
     public int WatermarkOffsetY = 0;
@@ -20,22 +26,31 @@ public class WatermarkScreenCapture : MonoBehaviour
 
     private bool ScreenCaptureWithUI_Ing = false;
     private bool ScreenCaptureWithoutUI_Ing = false;
-    private bool UseWatermark = true;
 
     private string Day;
     public string FilePath;
     public string FolderName;
     public string FileName;
 
+    public Image FlashImg;
+    public float FlashDuration = 0.5f;
+    public AnimationCurve FlashCurve;
+    private Coroutine FlashCoroutine;
+
+    private bool ImmediatelySave = false;
+
     public void Awake()
     {
         ScreenCaptureTexture = null;
-
+#if UNITY_EDITOR
         FilePath = Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
-
+#elif UNITY_ANDROID
+        FilePath = "storage/emulated/0/DCIM/";
+#endif
         FolderName =  Application.productName;
     }
 
+    #region FuncScreenCapture
     public void ScreenCaptureWithUI(bool useWatermark)
     {
         if (ScreenCaptureWithUI_Ing)
@@ -43,7 +58,6 @@ public class WatermarkScreenCapture : MonoBehaviour
         StartCoroutine(Co_ScreenCapture());
         UseWatermark = useWatermark;
     }
-
     private IEnumerator Co_ScreenCapture()
     {
         ScreenCaptureWithUI_Ing = true;
@@ -51,7 +65,6 @@ public class WatermarkScreenCapture : MonoBehaviour
         ScreenCapture();
         ScreenCaptureWithUI_Ing = false;
     }
-
     public void ScreenCaptureWithoutUI(bool useWatermark)
     {
         RenderPipelineManager.endCameraRendering += RenderPipelineManager_endCameraRendering;
@@ -66,9 +79,19 @@ public class WatermarkScreenCapture : MonoBehaviour
         ScreenCaptureWithoutUI_Ing = false;
         RenderPipelineManager.endCameraRendering -= RenderPipelineManager_endCameraRendering;
     }
-
     private void ScreenCapture()
     {
+        if (FlashImg != null)
+        {
+            if (FlashCoroutine != null)
+            {
+                return;
+            }
+            else
+            {
+                FlashCoroutine = StartCoroutine(Co_Flash(FlashDuration));
+            }
+        }
         SetFileName();
 
         ScreenWidth = Screen.width;
@@ -79,12 +102,66 @@ public class WatermarkScreenCapture : MonoBehaviour
 
         if (UseWatermark)
         {
+            WatermarkScaleFactor = ScreenWidth / 2400f;
             ScreenCaptureTexture = ScreenCaptureTexture.AddWaterMark(WatermarkTexture, WatermarkAnchor, WatermarkScaleFactor, WatermarkOffsetX, WatermarkOffsetY);
         }
         else
         {
             ScreenCaptureTexture.Apply();
         }
+
+        if(ImmediatelySave)
+        {
+            Save();
+        }
+    }
+    #endregion
+
+    IEnumerator Co_Flash(float duration)
+    {
+        FlashImg.color = Color.white;
+
+        for (float time = 0; time < duration; time+=Time.deltaTime)
+        {
+            Color currentColor = FlashImg.color;
+            currentColor.a = Mathf.Lerp(1, 0, FlashCurve.Evaluate(time/duration));
+            FlashImg.color = currentColor;
+            yield return null;
+        }
+        FlashImg.color = Color.clear;
+        FlashCoroutine = null;
+    }
+
+    #region SetOptions
+    public void SetUseWatermark(bool value)
+    {
+        UseWatermark = value;
+    }
+    public void SetWithUI(bool value)
+    {
+        WithUI = value;
+    }
+    public void SetWatermarkAnchor(TextureExtensions.Watermark_Anchor watermark_Anchor)
+    {
+        WatermarkAnchor = watermark_Anchor;
+    }
+    #endregion
+
+    public void OnClickScreenCapture()
+    {
+#if UNITY_EDITOR
+        DoScreenCapture();
+#elif UNITY_ANDROID
+        AndroidPermission.CheckPermissionAndDo(Permission.ExternalStorageWrite, () => DoScreenCapture(), denidedAndDonAskAgain: AndroidPermission.OpenAppSetting);
+#else
+        DoScreenCapture();
+#endif
+    }
+
+    private void DoScreenCapture()
+    {
+        ImmediatelySave = true;
+        ScreenCaptureWithoutUI(true);
     }
 
     private void SetFileName()
@@ -103,5 +180,13 @@ public class WatermarkScreenCapture : MonoBehaviour
         byte[] byteArray = ScreenCaptureTexture.EncodeToPNG();
         string filePath = Path.Combine(directory, FileName);
         File.WriteAllBytes(filePath, byteArray);
+        ToastMessage.Instance.ShowToast($"Storage Path : {FilePath}/{FolderName}", ToastLength.Short);
+
+#if !UNITY_EDITOR
+#if UNITY_ANDROID
+        GGAndroid.RefreshGallery(FilePath, FolderName);
+#endif
+#endif
+        ImmediatelySave = false;
     }
 }

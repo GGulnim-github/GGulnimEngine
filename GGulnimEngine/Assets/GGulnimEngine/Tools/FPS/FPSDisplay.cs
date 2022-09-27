@@ -3,6 +3,7 @@
 /// <summary>
 /// [Project Setting] - [Other Setting] - [Scripting Define Symbols] - [Add] - [SHOW_FPS]
 /// </summary>
+[AddComponentMenu("GGulnim Engine/Tools/FPS Display")]
 public class FPSDisplay : MonoBehaviour
 {
 	public const string SHOW_FPS = "SHOW_FPS";
