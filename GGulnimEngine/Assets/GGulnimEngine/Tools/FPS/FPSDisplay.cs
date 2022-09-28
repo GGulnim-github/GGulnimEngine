@@ -35,7 +35,7 @@ public class FPSDisplay : MonoBehaviour
 
 		GUIStyle style = new GUIStyle();
 
-		Rect rect = new Rect(0.0f, 0.0f, Screen.width, Screen.height);
+		Rect rect = new Rect(30.0f, 30.0f, Screen.width, Screen.height);
 
 		if (DispPosH == DISPLAY_POS_H.LEFT && DispPosV == DISPLAY_POS_V.TOP)
 			style.alignment = TextAnchor.UpperLeft;
@@ -47,7 +47,7 @@ public class FPSDisplay : MonoBehaviour
 			style.alignment = TextAnchor.LowerRight;
 
 		style.fontSize = fontSize;
-		style.normal.textColor = Color.white;
+		style.normal.textColor = Color.green;
 		float ms = _deltaTime * 1000.0f;
 		float fps = 1.0f / _deltaTime;
 		string text = $"{fps:0.} fps ({ms:0.0} ms)";

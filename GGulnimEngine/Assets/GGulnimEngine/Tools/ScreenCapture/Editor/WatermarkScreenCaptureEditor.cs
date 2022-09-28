@@ -5,15 +5,15 @@ using UnityEditor;
 [CustomEditor(typeof(WatermarkScreenCapture))]
 public class WatermarkScreenCaptureEditor : Editor
 {
-    private WatermarkScreenCapture m_target;
+    private WatermarkScreenCapture _target;
 
     private WatermarkScreenCapture Target
     {
         get
         {
-            if (m_target != null) return m_target;
-            m_target = (WatermarkScreenCapture)target;
-            return m_target;
+            if (_target != null) return _target;
+            _target = (WatermarkScreenCapture)target;
+            return _target;
         }
     }
 
@@ -31,7 +31,7 @@ public class WatermarkScreenCaptureEditor : Editor
 
     private void OnEnable()
     {
-        m_target = (WatermarkScreenCapture)target;
+        _target = (WatermarkScreenCapture)target;
 
         WatermarkTexture = serializedObject.FindProperty("WatermarkTexture");
         WatermarkAnchor = serializedObject.FindProperty("WatermarkAnchor");

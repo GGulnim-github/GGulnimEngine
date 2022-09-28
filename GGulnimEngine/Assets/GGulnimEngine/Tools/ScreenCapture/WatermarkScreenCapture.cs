@@ -24,8 +24,8 @@ public class WatermarkScreenCapture : MonoBehaviour
     public int ScreenWidth = 0;
     public int ScreenHeight = 0;
 
-    private bool ScreenCaptureWithUI_Ing = false;
-    private bool ScreenCaptureWithoutUI_Ing = false;
+    private bool _screenCaptureWithUI_Ing = false;
+    private bool _screenCaptureWithoutUI_Ing = false;
 
     private string Day;
     public string FilePath;
@@ -35,7 +35,7 @@ public class WatermarkScreenCapture : MonoBehaviour
     public Image FlashImg;
     public float FlashDuration = 0.5f;
     public AnimationCurve FlashCurve;
-    private Coroutine FlashCoroutine;
+    private Coroutine _flashCoroutine;
 
     private bool ImmediatelySave = false;
 
@@ -53,43 +53,43 @@ public class WatermarkScreenCapture : MonoBehaviour
     #region FuncScreenCapture
     public void ScreenCaptureWithUI(bool useWatermark)
     {
-        if (ScreenCaptureWithUI_Ing)
+        if (_screenCaptureWithUI_Ing)
             return;
         StartCoroutine(Co_ScreenCapture());
         UseWatermark = useWatermark;
     }
     private IEnumerator Co_ScreenCapture()
     {
-        ScreenCaptureWithUI_Ing = true;
+        _screenCaptureWithUI_Ing = true;
         yield return new WaitForEndOfFrame();
         ScreenCapture();
-        ScreenCaptureWithUI_Ing = false;
+        _screenCaptureWithUI_Ing = false;
     }
     public void ScreenCaptureWithoutUI(bool useWatermark)
     {
         RenderPipelineManager.endCameraRendering += RenderPipelineManager_endCameraRendering;
-        ScreenCaptureWithoutUI_Ing = true;
+        _screenCaptureWithoutUI_Ing = true;
         UseWatermark = useWatermark;
     }
     private void RenderPipelineManager_endCameraRendering(ScriptableRenderContext arg1, Camera arg2)
     {
-        if (!ScreenCaptureWithoutUI_Ing)
+        if (!_screenCaptureWithoutUI_Ing)
             return;
         ScreenCapture();
-        ScreenCaptureWithoutUI_Ing = false;
+        _screenCaptureWithoutUI_Ing = false;
         RenderPipelineManager.endCameraRendering -= RenderPipelineManager_endCameraRendering;
     }
     private void ScreenCapture()
     {
         if (FlashImg != null)
         {
-            if (FlashCoroutine != null)
+            if (_flashCoroutine != null)
             {
                 return;
             }
             else
             {
-                FlashCoroutine = StartCoroutine(Co_Flash(FlashDuration));
+                _flashCoroutine = StartCoroutine(Co_Flash(FlashDuration));
             }
         }
         SetFileName();
@@ -129,7 +129,7 @@ public class WatermarkScreenCapture : MonoBehaviour
             yield return null;
         }
         FlashImg.color = Color.clear;
-        FlashCoroutine = null;
+        _flashCoroutine = null;
     }
 
     #region SetOptions

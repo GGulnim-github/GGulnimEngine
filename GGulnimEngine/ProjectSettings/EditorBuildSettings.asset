@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/GGulnimEngine/Scenes/TestScene.unity
-    guid: 257c43bcdd38a8e499d667fbfd0d8b41
+    path: Assets/GGulnimEngine/Scenes/HLOD.unity
+    guid: 7004822886a3e454e80219e17cd208ba
   m_configObjects: {}
