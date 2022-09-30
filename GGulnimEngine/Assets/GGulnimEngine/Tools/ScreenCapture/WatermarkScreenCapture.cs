@@ -180,10 +180,15 @@ public class WatermarkScreenCapture : MonoBehaviour
         byte[] byteArray = ScreenCaptureTexture.EncodeToPNG();
         string filePath = Path.Combine(directory, FileName);
         File.WriteAllBytes(filePath, byteArray);
-        ToastMessage.Instance.ShowToast($"Storage Path : {FilePath}/{FolderName}", ToastLength.Short);
 
-#if !UNITY_EDITOR
+        string toastMessage = $"Storage Path : {FilePath}/{FolderName}";
+        ToastLength toastLength = ToastLength.Short;
+
+#if UNITY_EDITOR
+        ToastMessage.Instance.ShowToast(toastMessage, toastLength);
+#else
 #if UNITY_ANDROID
+        GGAndroid.ShowToast(toastMessage, toastLength);
         GGAndroid.RefreshGallery(FilePath, FolderName);
 #endif
 #endif

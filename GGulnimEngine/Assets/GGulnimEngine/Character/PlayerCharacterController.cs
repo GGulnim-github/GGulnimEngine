@@ -12,11 +12,11 @@ public class PlayerCharacterController : MonoBehaviour
     public float MoveSpeed = 2.0f;
     
     [Tooltip("Sprint speed of the character in m/s")]
-    public float SprintSpeed = 5.335f;
+    public float SprintSpeed = 6.0f;
 
     [Tooltip("How fast the character turns to face movement direction")]
     [Range(0.0f, 0.3f)]
-    public float RotationSmoothTime = 0.12f;
+    public float RotationSmoothTime = 0.15f;
 
     [Tooltip("Acceleration and deceleration")]
     public float SpeedChangeRate = 10.0f;
@@ -26,7 +26,7 @@ public class PlayerCharacterController : MonoBehaviour
     public float JumpHeight = 1.2f;
 
     [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
-    public float Gravity = -15.0f;
+    public float Gravity = -9.81f;
 
     [Space(10)]
     [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -40,10 +40,10 @@ public class PlayerCharacterController : MonoBehaviour
     public bool Grounded = true;
 
     [Tooltip("Useful for rough ground")]
-    public float GroundedOffset = -0.14f;
+    public float GroundedOffset = -0.1f;
 
     [Tooltip("The radius of the grounded check. Should match the radius of the CharacterController")]
-    public float GroundedRadius = 0.28f;
+    public float GroundedRadius = 0.2f;
 
     [Tooltip("What layers the character uses as ground")]
     public LayerMask GroundLayers;
@@ -96,19 +96,20 @@ public class PlayerCharacterController : MonoBehaviour
         _input = GetComponent<PlayerInputs>();
 
         AssignAnimationIDs();
+
+        _jumpTimeoutDelta = JumpTimeout;
+        _fallTimeoutDelta = FallTimeout;
+    }
+    private void Update()
+    {
+        CameraZoom();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         JumpAndGravity();
         GroundedCheck();
         Move();
-    }
-
-    private void LateUpdate()
-    {
-        CameraRotation();
-        CameraZoom();
     }
 
     private void AssignAnimationIDs()
@@ -130,7 +131,7 @@ public class PlayerCharacterController : MonoBehaviour
         _animator.SetBool(_animIDGrounded, Grounded);
     }
 
-    private void CameraRotation()
+    public void CameraRotation()
     {
         CinemachineFreeLook.m_XAxis.Value += _input.look.x  * CinemachineXAixSpeed / 1000;
         CinemachineFreeLook.m_YAxis.Value += _input.look.y * CinemachineYAixSpeed / 1000;
@@ -151,30 +152,12 @@ public class PlayerCharacterController : MonoBehaviour
 
         // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
         // if there is no input, set the target speed to 0
-        if (_input.move == Vector2.zero) targetSpeed = 0.0f;
-
-        // a reference to the players current horizontal velocity
-        float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
-
-        float speedOffset = 0.1f;
-        float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
-
-        // accelerate or decelerate to target speed
-        if (currentHorizontalSpeed < targetSpeed - speedOffset ||
-            currentHorizontalSpeed > targetSpeed + speedOffset)
+        if (_input.move == Vector2.zero)
         {
-            // creates curved result rather than a linear one giving a more organic speed change
-            // note T in Lerp is clamped, so we don't need to clamp our speed
-            _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
-                Time.deltaTime * SpeedChangeRate);
+            targetSpeed = 0.0f; 
+        }
 
-            // round speed to 3 decimal places
-            _speed = Mathf.Round(_speed * 1000f) / 1000f;
-        }
-        else
-        {
-            _speed = targetSpeed;
-        }
+        _speed = targetSpeed;
 
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
         if (_animationBlend < 0.01f) _animationBlend = 0f;
@@ -199,6 +182,7 @@ public class PlayerCharacterController : MonoBehaviour
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
         // move the player
+
         _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                          new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         
@@ -271,5 +255,19 @@ public class PlayerCharacterController : MonoBehaviour
         if (lfAngle < -360f) lfAngle += 360f;
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
+        Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
+
+        if (Grounded) Gizmos.color = transparentGreen;
+        else Gizmos.color = transparentRed;
+
+        // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
+        Gizmos.DrawSphere(
+            new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z),
+            GroundedRadius);
     }
 }

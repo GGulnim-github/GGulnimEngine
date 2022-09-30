@@ -12,9 +12,6 @@ public class PlayerInputs : MonoBehaviour
 	public bool jump;
 	public bool sprint;
 
-	[Header("Movement Settings")]
-	public bool analogMovement;
-
 	public void OnMove(InputValue value)
 	{
 		MoveInput(value.Get<Vector2>());

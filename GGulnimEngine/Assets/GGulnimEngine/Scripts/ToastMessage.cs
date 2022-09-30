@@ -3,21 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum ToastLength { Short, Long }
+#if UNITY_EDITOR
 public class ToastMessage : Singleton<ToastMessage>
 {
     private string Message = string.Empty;
     private float Length = 0f;
     private GUIStyle ToastStyle;
 
-#if UNITY_EDITOR
+
     private void Update()
     {
         if (Length > 0f)
             Length -= Time.unscaledDeltaTime;
     }
-#endif
-
-#if UNITY_EDITOR
     private void OnGUI()
     {
         if (Length <= 0f) return;
@@ -37,7 +35,7 @@ public class ToastMessage : Singleton<ToastMessage>
 
         GUI.Box(rect, Message, ToastStyle);
     }
-#endif
+
 
     public void ShowToastShort(string message)
     {
@@ -51,7 +49,7 @@ public class ToastMessage : Singleton<ToastMessage>
     public void ShowToast(string message, ToastLength length)
     {
         Message = message;
-#if UNITY_EDITOR
+
         switch (length)
         {
             case ToastLength.Short:
@@ -61,18 +59,6 @@ public class ToastMessage : Singleton<ToastMessage>
                 Length = 3.5f;
                 break;
         }
-#elif UNITY_ANDROID
-        GGAndroid.ShowToast(message, length);
-#else
-        switch (length)
-        {
-            case ToastLength.Short:
-                Length = 2f;
-                break;
-            case ToastLength.Long:
-                Length = 3.5f;
-                break;
-        }
-#endif
     }
 }
+#endif

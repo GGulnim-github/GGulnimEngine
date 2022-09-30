@@ -40,6 +40,12 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.hlod": {
+      "version": "file:C:/Users/nextor/Documents/GitHub/HLODSystem/com.unity.hlod",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.ide.rider": {
       "version": "3.0.14",
       "depth": 0,
