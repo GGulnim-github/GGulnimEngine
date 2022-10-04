@@ -3,12 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PlayerCameraController : MonoBehaviour, IDragHandler
+public class PlayerCameraController : MonoBehaviour, IDragHandler, IEndDragHandler
 {
-    public PlayerCharacterController characterController;
+    public Vector2 Look;
+
+    private void Awake()
+    {
+        Look = Vector2.zero;
+    }
 
     public void OnDrag(PointerEventData eventData)
     {
-        characterController.CameraRotation();
+        Look = eventData.delta;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        Look = Vector2.zero;
     }
 }

@@ -2340,7 +2340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveSpeed: 2
-  SprintSpeed: 7
+  SprintSpeed: 6
   RotationSmoothTime: 0.15
   SpeedChangeRate: 10
   JumpHeight: 1.2
@@ -2371,11 +2371,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   move: {x: 0, y: 0}
-  look: {x: 0, y: 0}
   zoom: 0
   jump: 0
   sprint: 0
-  analogMovement: 0
 --- !u!114 &972874182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2403,7 +2401,7 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: PC
+  m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}

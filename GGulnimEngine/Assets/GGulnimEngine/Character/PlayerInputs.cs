@@ -6,20 +6,22 @@ using UnityEngine.InputSystem;
 public class PlayerInputs : MonoBehaviour
 {
     [Header("Character Input Values")]
-    public Vector2 move;
-    public Vector2 look;
-	public float zoom;
-	public bool jump;
-	public bool sprint;
+    public Vector2 Move;
+	public float Zoom;
+	public bool Jump;
+	public bool Sprint;
 
 	public void OnMove(InputValue value)
 	{
 		MoveInput(value.Get<Vector2>());
-	}
-
-	public void OnLook(InputValue value)
-	{
-		LookInput(value.Get<Vector2>());
+		if (Move.magnitude > 0.7f)
+		{
+			Sprint = true;
+		}
+		else
+        {
+			Sprint = false;
+        }
 	}
 
 	public void OnZoom(InputValue value)
@@ -39,26 +41,21 @@ public class PlayerInputs : MonoBehaviour
 
 	public void MoveInput(Vector2 newMoveDirection)
 	{
-		move = newMoveDirection;
-	}
-
-	public void LookInput(Vector2 newLookDirection)
-	{
-		look = newLookDirection;
+		Move = newMoveDirection;
 	}
 
 	public void ZoomInput(float newZoomValue)
     {
-		zoom = newZoomValue;
+		Zoom = newZoomValue;
     }
 
 	public void JumpInput(bool newJumpState)
 	{
-		jump = newJumpState;
+		Jump = newJumpState;
 	}
 
 	public void SprintInput(bool newSprintState)
 	{
-		sprint = newSprintState;
+		Sprint = newSprintState;
 	}
 }

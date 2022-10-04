@@ -57,6 +57,9 @@ public class PlayerCharacterController : MonoBehaviour
     public float CinemachineZoomFar = 40f;
     public float CinemachineZoomNear = 20f;
 
+    [Space(10)]
+    public PlayerCameraController PlayerCameraController;
+
     // timeout deltatime
     private float _jumpTimeoutDelta;
     private float _fallTimeoutDelta;
@@ -102,11 +105,13 @@ public class PlayerCharacterController : MonoBehaviour
     }
     private void Update()
     {
-        CameraZoom();
+
+        //CameraZoom();
     }
 
     void FixedUpdate()
     {
+        CameraRotation();
         JumpAndGravity();
         GroundedCheck();
         Move();
@@ -133,26 +138,26 @@ public class PlayerCharacterController : MonoBehaviour
 
     public void CameraRotation()
     {
-        CinemachineFreeLook.m_XAxis.Value += _input.look.x  * CinemachineXAixSpeed / 1000;
-        CinemachineFreeLook.m_YAxis.Value += _input.look.y * CinemachineYAixSpeed / 1000;
+        CinemachineFreeLook.m_XAxis.Value += PlayerCameraController.Look.x  * CinemachineXAixSpeed / 1000;
+        CinemachineFreeLook.m_YAxis.Value +=  PlayerCameraController.Look.y * CinemachineYAixSpeed / 1000;
     }
 
     private void CameraZoom()
     {        
-        float newFOV = Mathf.Clamp(CinemachineFreeLook.m_Lens.FieldOfView + _input.zoom / 30f, CinemachineZoomNear, CinemachineZoomFar);
+        float newFOV = Mathf.Clamp(CinemachineFreeLook.m_Lens.FieldOfView + _input.Zoom / 30f, CinemachineZoomNear, CinemachineZoomFar);
         CinemachineFreeLook.m_Lens.FieldOfView = newFOV;
     }
 
     private void Move()
     {
         // set target speed based on move speed, sprint speed and if sprint is pressed
-        float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+        float targetSpeed = _input.Sprint ? SprintSpeed : MoveSpeed;
 
         // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
         // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
         // if there is no input, set the target speed to 0
-        if (_input.move == Vector2.zero)
+        if (_input.Move == Vector2.zero)
         {
             targetSpeed = 0.0f; 
         }
@@ -163,11 +168,11 @@ public class PlayerCharacterController : MonoBehaviour
         if (_animationBlend < 0.01f) _animationBlend = 0f;
 
         // normalise input direction
-        Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+        Vector3 inputDirection = new Vector3(_input.Move.x, 0.0f, _input.Move.y).normalized;
 
         // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
         // if there is a move input rotate player when the player is moving
-        if (_input.move != Vector2.zero)
+        if (_input.Move != Vector2.zero)
         {
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                               _mainCamera.transform.eulerAngles.y;
@@ -208,7 +213,7 @@ public class PlayerCharacterController : MonoBehaviour
             }
 
             // Jump
-            if (_input.jump && _jumpTimeoutDelta <= 0.0f)
+            if (_input.Jump && _jumpTimeoutDelta <= 0.0f)
             {
                 // the square root of H * -2 * G = how much velocity needed to reach desired height
                 _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -240,7 +245,7 @@ public class PlayerCharacterController : MonoBehaviour
             }
 
             // if we are not grounded, do not jump
-            _input.jump = false;
+            _input.Jump = false;
         }
 
         // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
