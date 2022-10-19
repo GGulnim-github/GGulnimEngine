@@ -9,7 +9,6 @@ public class GameSettingManager : Singleton<GameSettingManager>
 #if !UNITY_EDITOR
     private void Awake()
     {
-
         Application.targetFrameRate = TargetFrameRate;
     }
 #endif

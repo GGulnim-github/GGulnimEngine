@@ -2270,7 +2270,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8404224268597458431
 Transform:
   m_ObjectHideFlags: 0
@@ -2354,10 +2354,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 136
   CinemachineFreeLook: {fileID: 0}
-  CinemachineXAixSpeed: 100
-  CinemachineYAixSpeed: 2
+  CinemachineXAixSpeed: 50
+  CinemachineYAixSpeed: 1
   CinemachineZoomFar: 40
   CinemachineZoomNear: 20
+  PlayerCameraController: {fileID: 0}
 --- !u!114 &972874179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2370,10 +2371,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1803c0fa04f661c419b4e23821f0a0ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  move: {x: 0, y: 0}
-  zoom: 0
-  jump: 0
-  sprint: 0
+  Move: {x: 0, y: 0}
+  Zoom: 0
+  Jump: 0
+  Sprint: 0
 --- !u!114 &972874182
 MonoBehaviour:
   m_ObjectHideFlags: 0

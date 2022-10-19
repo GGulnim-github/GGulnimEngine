@@ -105,13 +105,12 @@ public class PlayerCharacterController : MonoBehaviour
     }
     private void Update()
     {
-
-        //CameraZoom();
+        CameraRotation();
+        CameraZoom();
     }
 
     void FixedUpdate()
     {
-        CameraRotation();
         JumpAndGravity();
         GroundedCheck();
         Move();
@@ -138,14 +137,23 @@ public class PlayerCharacterController : MonoBehaviour
 
     public void CameraRotation()
     {
-        CinemachineFreeLook.m_XAxis.Value += PlayerCameraController.Look.x  * CinemachineXAixSpeed / 1000;
-        CinemachineFreeLook.m_YAxis.Value +=  PlayerCameraController.Look.y * CinemachineYAixSpeed / 1000;
+        CinemachineFreeLook.m_XAxis.Value += PlayerCameraController.Look.x;
+        CinemachineFreeLook.m_YAxis.Value -=  PlayerCameraController.Look.y;
+        PlayerCameraController.Look = Vector2.zero;
     }
 
     private void CameraZoom()
-    {        
+    {
+
+#if UNITY_EDITOR
         float newFOV = Mathf.Clamp(CinemachineFreeLook.m_Lens.FieldOfView + _input.Zoom / 30f, CinemachineZoomNear, CinemachineZoomFar);
         CinemachineFreeLook.m_Lens.FieldOfView = newFOV;
+#else
+        float newFOV = Mathf.Clamp(CinemachineFreeLook.m_Lens.FieldOfView - PlayerCameraController.Zoom, CinemachineZoomNear, CinemachineZoomFar);
+        CinemachineFreeLook.m_Lens.FieldOfView = newFOV;
+        PlayerCameraController.Zoom = 0;
+#endif
+
     }
 
     private void Move()
